@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 | All routes are prefixed with /api by default (api.php file).
-| Structured by feature groups, with TODOs for planned endpoints.
 |--------------------------------------------------------------------------
 */
 
@@ -19,3 +19,14 @@ Route::get('/health', function () {
         'time'   => now()->toIso8601String(),
     ]);
 });
+
+/*
+|--------------------------------------------------------------------------
+| Products API Routes
+|--------------------------------------------------------------------------
+| All Product related routes.
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/products', [ProductController::class, 'store']);
+Route::get('/products', [ProductController::class, 'index']);
