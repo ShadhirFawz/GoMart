@@ -1,9 +1,10 @@
 import { useState } from 'react';
-//import ProductForm from './components/ProductForm';
+import ProductForm from './components/ProductForm';
 import ProductList from './components/ProductList';
 import './App.css';
 
 function App() {
+  const [refresh, setRefresh] = useState(false);
 
   return (
       <div className="app-container">
@@ -15,10 +16,10 @@ function App() {
           
           <div className="row justify-content-center">
             <div className="col-12 col-lg-5 mb-5 mb-lg-0">
-              //Product Form component
+              <ProductForm onProductAdded={() => setRefresh(!refresh)} />
             </div>
             <div className="col-12 col-lg-7">
-              <ProductList />
+              <ProductList refresh={refresh} />
             </div>
           </div>
         </div>
