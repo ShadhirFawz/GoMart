@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 
-export default function ProductList({ refresh }) {
+export default function ProductList({ refreshCount }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { addToast } = useToast();
 
-  // Fetch products whenever component loads or refresh changes
+  // Fetch products whenever component loads or refreshCount changes
   useEffect(() => {
     setIsLoading(true);
     api.get('/products')
@@ -25,7 +25,7 @@ export default function ProductList({ refresh }) {
           duration: 5000
         });
       });
-  }, [refresh, addToast]);
+  }, [refreshCount]); // Only depend on refreshCount, not addToast
 
   if (isLoading) {
     return (
@@ -69,7 +69,7 @@ export default function ProductList({ refresh }) {
                 </div>
                 <div className="card-body d-flex flex-column">
                   <h5 className="card-title text-dark">{p.product_name}</h5>
-                  <p className="card-text fw-bold text-primary fs-4">${p.price}</p>
+                  <p className="card-text fw-bold text-primary fs-4">Rs{p.price}</p>
                   <div className="mt-auto">
                     <button className="btn btn-outline-primary w-100">View Details</button>
                   </div>

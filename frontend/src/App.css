@@ -26,8 +26,10 @@ body {
   color: #2d3748;
   font-size: 2.8rem;
   margin-bottom: 0.5rem;
+  padding: 1rem;
+  border-radius: 10px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: text;
   animation: fadeIn 1s ease-out;
 }
 
@@ -111,7 +113,7 @@ body {
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #1555d5;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -123,6 +125,230 @@ body {
 
 .App-link {
   color: #61dafb;
+}
+
+.toast-container {
+  z-index: 1100;
+}
+
+.toast-alert {
+  display: flex;
+  align-items: start;
+  width: 24rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.4s ease-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-family: sans-serif;
+}
+
+.toast-success {
+  background-color: white;
+  border-left: 4px solid #10b981;
+  color: #1f2937;
+}
+
+.toast-success .toast-icon-success {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+.toast-error {
+  background-color: white;
+  border-left: 4px solid #ef4444;
+  color: #1f2937;
+}
+
+.toast-error .toast-icon-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.toast-warning {
+  background-color: white;
+  border-left: 4px solid #f59e0b;
+  color: #1f2937;
+}
+
+.toast-warning .toast-icon-warning {
+  background-color: #fefcbf;
+  color: #713f12;
+}
+
+.toast-info {
+  background-color: white;
+  border-left: 4px solid #3b82f6;
+  color: #1f2937;
+}
+
+.toast-info .toast-icon-info {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.toast-default {
+  background-color: white;
+  border-left: 4px solid #6b7280;
+  color: #1f2937;
+}
+
+.toast-icon-success,
+.toast-icon-error,
+.toast-icon-warning,
+.toast-icon-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  margin-right: 1rem;
+}
+
+.btn-close {
+  margin-left: 1rem;
+  margin-top: -0.25rem;
+  margin-right: -0.25rem;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.btn-close:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-close svg {
+  width: 1rem;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .toast-success {
+    background-color: #111827;
+    color: #d1d5db;
+  }
+
+  .toast-error {
+    background-color: #111827;
+    color: #d1d5db;
+  }
+
+  .toast-warning {
+    background-color: #111827;
+    color: #d1d5db;
+  }
+
+  .toast-info {
+    background-color: #111827;
+    color: #d1d5db;
+  }
+
+  .toast-default {
+    background-color: #111827;
+    color: #d1d5db;
+  }
+
+  .toast-success .toast-icon-success {
+    background-color: #04785733;
+    color: #34d399;
+  }
+
+  .toast-error .toast-icon-error {
+    background-color: #991b1b33;
+    color: #f87171;
+  }
+
+  .toast-warning .toast-icon-warning {
+    background-color: #713f1233;
+    color: #fbbf24;
+  }
+
+  .toast-info .toast-icon-info {
+    background-color: #1e40af33;
+    color: #60a5fa;
+  }
+
+  .btn-close:hover {
+    background-color: #374151;
+  }
+}
+
+/* Bootstrap Icons */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
+
+.toast-alert .btn-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  padding: 0.5rem;
+  filter: invert(1) brightness(2);
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.toast-alert .btn-close:hover {
+  opacity: 1;
+}
+
+/* Ensure the content doesn't overlap with close button */
+.toast-alert .flex-grow-1 {
+  padding-right: 30px;
+}
+
+/* Make sure the toast container has proper z-index */
+.toast-container {
+  z-index: 1100;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+/* Toast alert positioning */
+.toast-alert {
+  position: relative;
+  min-width: 300px;
+  max-width: 400px;
+  margin-bottom: 10px;
+}
+
+/* Ensure close button is visible and works */
+.btn-close {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-close:hover {
+  opacity: 1;
 }
 
 @keyframes App-logo-spin {

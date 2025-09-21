@@ -1,36 +1,36 @@
 import { useState } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { validateProductForm, getFieldError, hasErrors } from '../utils/validation';
 
 export default function ProductForm({ onProductAdded }) {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrors({});
 
-    // Frontend validation
-    if (!productName || !price || isNaN(price) || price <= 0) {
+    // Validate form using the validation utility
+    const validationResult = validateProductForm({ productName, price, image });
+    
+    if (!validationResult.isValid) {
+      setErrors(validationResult.errors);
+      
+      // Show toast for the first error found
+      const firstErrorKey = Object.keys(validationResult.errors)[0];
       addToast({
         type: 'error',
         title: 'Validation Error',
-        message: 'Please enter a valid product name and positive price.',
+        message: validationResult.errors[firstErrorKey],
         duration: 5000
       });
-      setIsSubmitting(false);
-      return;
-    }
-    if (!image) {
-      addToast({
-        type: 'error',
-        title: 'Validation Error',
-        message: 'Please upload a product image.',
-        duration: 5000
-      });
+      
       setIsSubmitting(false);
       return;
     }
@@ -52,36 +52,56 @@ export default function ProductForm({ onProductAdded }) {
         duration: 3000
       });
       
+      // Reset form
       setProductName('');
       setPrice('');
       setImage(null);
+      setErrors({});
       e.target.reset(); // reset file input
-      onProductAdded(); // refresh product list
+      
+      // Refresh product list
+      onProductAdded();
     } catch (err) {
+      let errorMessage = 'Error adding product.';
+      
       if (err.response?.data?.errors?.product_name) {
-        addToast({
-          type: 'error',
-          title: 'Error',
-          message: 'Product name already exists.',
-          duration: 5000
-        });
+        errorMessage = 'Product name already exists.';
+        setErrors({ productName: errorMessage });
       } else if (err.response?.data?.errors?.image) {
-        addToast({
-          type: 'error',
-          title: 'Error',
-          message: 'Invalid image format or size (max 2MB).',
-          duration: 5000
-        });
+        errorMessage = 'Invalid image format or size (max 2MB).';
+        setErrors({ image: errorMessage });
       } else {
-        addToast({
-          type: 'error',
-          title: 'Error',
-          message: 'Error adding product.',
-          duration: 5000
-        });
+        setErrors({ general: errorMessage });
       }
+      
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: errorMessage,
+        duration: 5000
+      });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    // Clear error when user starts typing in a field
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    
+    if (field === 'productName') setProductName(value);
+    if (field === 'price') setPrice(value);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    
+    // Clear image error when user selects a new file
+    if (errors.image) {
+      setErrors(prev => ({ ...prev, image: '' }));
     }
   };
 
@@ -93,35 +113,50 @@ export default function ProductForm({ onProductAdded }) {
         <label className="form-label fw-semibold">Product Name</label>
         <input
           type="text"
-          className="form-control form-control-lg"
+          className={`form-control form-control-md ${errors.productName ? 'is-invalid' : ''}`}
           value={productName}
-          onChange={(e) => setProductName(e.target.value)}
+          onChange={(e) => handleInputChange('productName', e.target.value)}
           placeholder="Enter product name"
         />
+        {errors.productName && (
+          <div className="invalid-feedback">{errors.productName}</div>
+        )}
       </div>
 
       <div className="mb-3">
-        <label className="form-label fw-semibold">Price ($)</label>
+        <label className="form-label fw-semibold">Price (Rs)</label>
         <input
           type="number"
-          className="form-control form-control-lg"
+          className={`form-control form-control-md ${errors.price ? 'is-invalid' : ''}`}
           value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          onChange={(e) => handleInputChange('price', e.target.value)}
           placeholder="Enter price"
           step="0.01"
         />
+        {errors.price && (
+          <div className="invalid-feedback">{errors.price}</div>
+        )}
       </div>
 
       <div className="mb-4">
         <label className="form-label fw-semibold">Product Image</label>
         <input
           type="file"
-          className="form-control form-control-lg"
+          className={`form-control form-control-md ${errors.image ? 'is-invalid' : ''}`}
           accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={handleImageChange}
         />
         <div className="form-text">Upload a JPG, PNG or WEBP image (max 2MB)</div>
+        {errors.image && (
+          <div className="invalid-feedback">{errors.image}</div>
+        )}
       </div>
+
+      {errors.general && (
+        <div className="alert alert-danger mb-3" role="alert">
+          {errors.general}
+        </div>
+      )}
 
       <button 
         type="submit" 
