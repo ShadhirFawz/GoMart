@@ -106,7 +106,7 @@ export default function ProductForm({ onProductAdded }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card p-4 shadow-lg border-0 card-hover">
+    <form onSubmit={handleSubmit} className="card p-4 shadow-lg border-2 card-hover">
       <h3 className="mb-4 text-gradient">Add New Product</h3>
       
       <div className="mb-3">

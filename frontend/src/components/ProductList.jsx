@@ -39,8 +39,12 @@ export default function ProductList({ refreshCount }) {
   }
 
   return (
-    <div>
-      <h3 className="mb-4 text-gradient">Product Inventory</h3>
+    <div className="product-grid-container">
+      {/* Header inside the product list area */}
+      <header className="text-center mb-4">
+        <h1 className="main-title">Product Catalogue</h1>
+        <p className="subtitle">Manage your product inventory with ease</p>
+      </header>
       
       {products.length === 0 ? (
         <div className="text-center py-5">

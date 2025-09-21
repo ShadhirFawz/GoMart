@@ -10,22 +10,70 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #a9b3c3 100%);
   min-height: 100vh;
   color: #2d3748;
 }
 
 .app-container {
   min-height: 100vh;
-  padding: 20px 0;
+  padding: 40px 20px;
+}
+
+.product-grid-container {
+  width: 100%;
+}
+
+.header-container {
+  display: none;
+}
+
+/* Ensure product cards maintain their size */
+.product-card {
+  height: 100%;
+}
+
+.product-image {
+  height: 200px;
+  object-fit: contain;
+}
+
+/* Make the form column fixed on larger screens */
+@media (min-width: 992px) {
+  .col-lg-4 {
+    position: relative;
+  }
+  
+  .sticky-top {
+    position: sticky;
+    top: 100px; /* Adjust based on your navbar height */
+    padding-top: 20px;
+    z-index: 100;
+  }
+}
+
+/* Adjust body padding for fixed navbar */
+body {
+  padding-top: 80px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .sticky-top {
+    position: static !important;
+  }
+  
+  .ps-lg-4 {
+    padding-left: 0 !important;
+  }
 }
 
 /* Typography */
 .main-title {
   font-weight: 700;
-  color: #2d3748;
-  font-size: 2.8rem;
-  margin-bottom: 0.5rem;
+  color: #e7e9ee;
+  font-size: 2rem;
+  margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 10px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -357,5 +405,95 @@ body {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Navbar Styles */
+.navbar {
+  padding: 0.8rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #111827;
+}
+
+.logo-svg {
+  transition: transform 0.3s ease;
+}
+
+.logo-svg:hover {
+  transform: scale(1.1);
+}
+
+/* Cart Animation */
+.cart-animation {
+  animation: float 2s ease-in-out infinite;
+}
+
+.cart-body {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.cart-wheel {
+  animation: spin 3s linear infinite;
+}
+
+.cart-handle {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.cart-item {
+  animation: itemBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(65, 15) translateY(0px); }
+  50% { transform: translate(65, 15) translateY(-3px); }
+}
+
+@keyframes pulse {
+  0%, 100% { stroke-width: 4; }
+  50% { stroke-width: 5; }
+}
+
+@keyframes spin {
+  0% { transform: translate(65, 15) rotate(0deg); }
+  100% { transform: translate(65, 15) rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(65, 15); }
+  50% { transform: translate(65, 15) translateY(-1px); }
+}
+
+@keyframes itemBounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+}
+
+.logo-text {
+  animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+  0% { fill: #ffffff; }
+  100% { fill: #ffffff; }
+}
+
+/* Responsive adjustments for navbar */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.5rem !important;
+  }
+  
+  .logo-svg {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .navbar-brand span {
+    font-size: 1.5rem !important;
   }
 }
