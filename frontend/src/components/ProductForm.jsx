@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import api from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 export default function ProductForm({ onProductAdded }) {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
-  const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,12 +15,22 @@ export default function ProductForm({ onProductAdded }) {
 
     // Frontend validation
     if (!productName || !price || isNaN(price) || price <= 0) {
-      setMessage('❌ Please enter a valid product name and positive price.');
+      addToast({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Please enter a valid product name and positive price.',
+        duration: 5000
+      });
       setIsSubmitting(false);
       return;
     }
     if (!image) {
-      setMessage('❌ Please upload a product image.');
+      addToast({
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Please upload a product image.',
+        duration: 5000
+      });
       setIsSubmitting(false);
       return;
     }
@@ -34,7 +45,13 @@ export default function ProductForm({ onProductAdded }) {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      setMessage(`✅ ${res.data.message}`);
+      addToast({
+        type: 'success',
+        title: 'Success',
+        message: `Product "${productName}" added successfully!`,
+        duration: 3000
+      });
+      
       setProductName('');
       setPrice('');
       setImage(null);
@@ -42,11 +59,26 @@ export default function ProductForm({ onProductAdded }) {
       onProductAdded(); // refresh product list
     } catch (err) {
       if (err.response?.data?.errors?.product_name) {
-        setMessage('❌ Product name already exists.');
+        addToast({
+          type: 'error',
+          title: 'Error',
+          message: 'Product name already exists.',
+          duration: 5000
+        });
       } else if (err.response?.data?.errors?.image) {
-        setMessage('❌ Invalid image format or size (max 2MB).');
+        addToast({
+          type: 'error',
+          title: 'Error',
+          message: 'Invalid image format or size (max 2MB).',
+          duration: 5000
+        });
       } else {
-        setMessage('❌ Error adding product.');
+        addToast({
+          type: 'error',
+          title: 'Error',
+          message: 'Error adding product.',
+          duration: 5000
+        });
       }
     } finally {
       setIsSubmitting(false);
@@ -105,12 +137,6 @@ export default function ProductForm({ onProductAdded }) {
           'Add Product'
         )}
       </button>
-
-      {message && (
-        <div className={`alert mt-4 ${message.includes('✅') ? 'alert-success' : 'alert-danger'}`} role="alert">
-          {message}
-        </div>
-      )}
     </form>
   );
 }

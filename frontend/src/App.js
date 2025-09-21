@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import ProductForm from './components/ProductForm';
 import ProductList from './components/ProductList';
+import { ToastProvider } from './context/ToastContext';
 import './App.css';
 
 function App() {
   const [refresh, setRefresh] = useState(false);
 
   return (
+    <ToastProvider>
       <div className="app-container">
         <div className="container py-5">
           <header className="text-center mb-5">
@@ -24,6 +26,7 @@ function App() {
           </div>
         </div>
       </div>
+    </ToastProvider>
   );
 }
 

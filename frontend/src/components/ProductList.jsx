@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 export default function ProductList({ refresh }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { addToast } = useToast();
 
   // Fetch products whenever component loads or refresh changes
   useEffect(() => {
@@ -13,11 +15,17 @@ export default function ProductList({ refresh }) {
         setProducts(res.data);
         setIsLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
         setProducts([]);
         setIsLoading(false);
+        addToast({
+          type: 'error',
+          title: 'Error',
+          message: 'Failed to load products.',
+          duration: 5000
+        });
       });
-  }, [refresh]);
+  }, [refresh, addToast]);
 
   if (isLoading) {
     return (
