@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -6,9 +6,14 @@ export default function ProductList({ refreshCount }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { addToast } = useToast();
+  const addToastRef = useRef(addToast);
 
-  // Fetch products whenever component loads or refreshCount changes
+  // Update the ref when addToast changes
   useEffect(() => {
+    addToastRef.current = addToast;
+  }, [addToast]);
+
+   useEffect(() => {
     setIsLoading(true);
     api.get('/products')
       .then(res => {
@@ -18,14 +23,14 @@ export default function ProductList({ refreshCount }) {
       .catch((err) => {
         setProducts([]);
         setIsLoading(false);
-        addToast({
+        addToastRef.current({
           type: 'error',
           title: 'Error',
           message: 'Failed to load products.',
           duration: 5000
         });
       });
-  }, [refreshCount]); // Only depend on refreshCount, not addToast
+  }, [refreshCount]); // Only depend on refreshCount
 
   if (isLoading) {
     return (
@@ -63,12 +68,44 @@ export default function ProductList({ refreshCount }) {
               style={{ animation: `slideUp 0.5s ease-out ${index * 0.1}s both` }}
             >
               <div className="card h-100 shadow-sm border-0 card-hover product-card">
-                <div className="product-image-container">
-                  <img
-                    src={`http://127.0.0.1:8000/${p.image_path}`}
-                    alt={p.product_name}
-                    className="card-img-top product-image"
-                  />
+                <div className="product-image-container" style={{ height: '200px' }}>
+                  {p.image_path ? (
+                    <img
+                      src={`http://127.0.0.1:8000/${p.image_path}`}
+                      alt={p.product_name}
+                      className="card-img-top product-image"
+                      onError={(e) => {
+                        // If image fails to load, replace with placeholder
+                        e.target.style.display = 'none';
+                        
+                        // Create and show placeholder
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'product-image-placeholder d-flex align-items-center justify-content-center';
+                        placeholder.style.height = '200px';
+                        placeholder.style.backgroundColor = '#f8f9fa';
+                        placeholder.style.fontSize = '5rem';
+                        placeholder.style.color = '#6c757d';
+                        placeholder.style.fontWeight = 'bold';
+                        placeholder.innerHTML = p.product_name ? p.product_name.charAt(0).toUpperCase() : '?';
+                        
+                        e.target.parentElement.appendChild(placeholder);
+                      }}
+                    />
+                  ) : (
+                    // Show placeholder directly if no image path
+                    <div 
+                      className="product-image-placeholder d-flex align-items-center justify-content-center"
+                      style={{ 
+                        height: '200px',
+                        backgroundColor: '#f8f9fa',
+                        fontSize: '3rem',
+                        color: '#6c757d',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {p.product_name ? p.product_name.charAt(0).toUpperCase() : '?'}
+                    </div>
+                  )}
                   <div className="product-overlay"></div>
                 </div>
                 <div className="card-body d-flex flex-column">

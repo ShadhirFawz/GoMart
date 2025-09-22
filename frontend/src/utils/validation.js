@@ -23,12 +23,12 @@ export const validateProductForm = (formData) => {
   }
 
   // Validate image
-  if (!image) {
-    errors.image = 'Product image is required';
-  } else if (image.type && !image.type.startsWith('image/')) {
-    errors.image = 'File must be an image (JPG, PNG, WEBP, etc.)';
-  } else if (image.size && image.size > 2 * 1024 * 1024) { // 2MB limit
-    errors.image = 'Image size must be less than 2MB';
+  if (image) {
+    if (image.type && !image.type.startsWith('image/')) {
+      errors.image = 'File must be an image (JPG, PNG, WEBP, etc.)';
+    } else if (image.size && image.size > 2 * 1024 * 1024) { // 2MB limit
+      errors.image = 'Image size must be less than 2MB';
+    }
   }
 
   return {

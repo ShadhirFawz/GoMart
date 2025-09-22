@@ -22,17 +22,22 @@ class ProductController extends Controller
         $validated = $request->validate([
             'product_name' => 'required|unique:products,product_name',
             'price' => 'required|numeric|min:0.01|regex:/^\d+(\.\d{1,2})?$/',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         // Store image in storage/app/public/products
-        $path = $request->file('image')->store('products', 'public');
+        // Handle image upload only if provided
+        $imagePath = '';
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $path = $request->file('image')->store('products', 'public');
+            $imagePath = 'storage/' . $path; // e.g. storage/products/abc.jpg
+        }
 
         // Save product
         $product = Product::create([
             'product_name' => $validated['product_name'],
             'price' => $validated['price'],
-            'image_path' => 'storage/' . $path, // e.g. storage/products/abc.jpg
+            'image_path' => $imagePath,
         ]);
 
         return response()->json([

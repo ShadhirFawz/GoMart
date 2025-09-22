@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
-import { validateProductForm, getFieldError, hasErrors } from '../utils/validation';
+import { validateProductForm } from '../utils/validation';
 
 export default function ProductForm({ onProductAdded }) {
   const [productName, setProductName] = useState('');
@@ -36,14 +36,31 @@ export default function ProductForm({ onProductAdded }) {
     }
 
     try {
-      const formData = new FormData();
-      formData.append('product_name', productName);
-      formData.append('price', parseFloat(price).toFixed(2));
-      formData.append('image', image);
-
-      const res = await api.post('/products', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      let config = {};
+      
+      if (image) {
+        const formData = new FormData();
+        formData.append('product_name', productName);
+        formData.append('price', parseFloat(price).toFixed(2));
+        formData.append('image', image);
+        config = {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        };
+        
+        await api.post('/products', formData, config);
+      } else {
+        // Send as JSON when no image
+        const productData = {
+          product_name: productName,
+          price: parseFloat(price).toFixed(2),
+          // Don't include image field at all
+        };
+        config = {
+          headers: { 'Content-Type': 'application/json' },
+        };
+        
+        await api.post('/products', productData, config);
+      }
 
       addToast({
         type: 'success',
@@ -139,7 +156,7 @@ export default function ProductForm({ onProductAdded }) {
       </div>
 
       <div className="mb-4">
-        <label className="form-label fw-semibold">Product Image</label>
+        <label className="form-label fw-semibold">Product Image (Optional)</label>
         <input
           type="file"
           className={`form-control form-control-md ${errors.image ? 'is-invalid' : ''}`}
