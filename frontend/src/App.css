@@ -411,13 +411,13 @@ body {
 
 /* Navbar Styles */
 .navbar {
-  padding: 0.8rem 0;
+  padding: 0.8rem 1rem;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: #111827;
+  background-color: #091a3e;
 }
 
 .logo-svg {
