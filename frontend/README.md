@@ -1,70 +1,244 @@
-# Getting Started with Create React App
+# GoMart System - Product Listing System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+The **GoMart System** is a full-stack application built with React and Laravel for managing product inventory. It supports product management, image uploads, real-time notifications, and a responsive, modern UI. This project is designed for scalability and ease of use, with comprehensive client- and server-side validation.
 
-In the project directory, you can run:
+## Table of Contents
 
-### `npm start`
+1. [Features](#features)
+2. [Tech Stack](#tech-stack)
+3. [Prerequisites](#prerequisites)
+4. [Installation & Setup](#installation--setup)
+5. [Project Structure](#project-structure)
+6. [Database Schema](#database-schema)
+7. [API Endpoints](#api-endpoints)
+8. [Configuration](#configuration)
+9. [UI Components](#ui-components)
+10. [Validation Rules](#validation-rules)
+11. [Scripts](#scripts)
+12. [Troubleshooting](#troubleshooting)
+13. [License](#license)
+14. [Contributing](#contributing)
+15. [Support](#support)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Product Management**: Add products with Name, Price and Image (optional).
+- **Image Upload**: Optional product image uploads with validation (max 2MB, specific formats).
+- **Real-time Notifications**: Toast messages for success, error, warning, and info states.
+- **Responsive Design**: Seamless experience on desktop and mobile devices.
+- **Form Validation**: Robust client- and server-side validation for data integrity.
+- **Modern UI**: Bootstrap-based interface with custom animations for a professional UX.
 
-### `npm test`
+## Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Frontend
 
-### `npm run build`
+- **React 18**: Frontend framework for dynamic UI.
+- **Bootstrap 5**: Styling and UI components.
+- **Axios**: HTTP client for API requests.
+- **Context API**: State management for toast notifications.
+- **CSS3**: Custom animations and styling.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Backend
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Laravel 11**: PHP framework for robust API development.
+- **MySQL**: Relational database for product storage.
+- **File Storage**: Local storage for product images.
+- **CORS**: Configured for secure cross-origin requests.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Prerequisites
 
-### `npm run eject`
+- **Node.js**: V22.4 or higher
+- **PHP**: v8.4 or higher
+- **Composer**: Dependency manager for PHP
+- **MySQL**: v10.4 or higher
+- **Git**: For version control
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Installation & Setup
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Backend (Laravel) Setup
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd backend
+   ```
+2. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
+3. Set up environment:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. Configure database in `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=gomart
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+5. Run migrations:
+   ```bash
+   php artisan migrate
+   ```
+6. Start the server:
+   ```bash
+   php artisan serve
+   ```
+   The backend will run on `http://localhost:8000`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Frontend (React) Setup
 
-## Learn More
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create `.env` file in frontend root:
+   ```env
+   REACT_APP_API_BASE_URL=http://localhost:8000/api
+   ```
+4. Start the development server:
+   ```bash
+   npm start
+   ```
+   The frontend will run on `http://localhost:3000`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Project Structure
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+product-catalogue/
+├── backend/                 # Laravel API
+│   ├── app/
+│   │   ├── Models/
+│   │   │   └── Product.php
+│   │   └── Http/
+│   │       └── Controllers/
+│   │           └── ProductController.php
+│   ├── database/
+│   │   └── migrations/
+│   │
+│   └── storage/
+│       └── app/public/products/  # Image storage
+├── frontend/                # React Application
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ProductForm.jsx
+│   │   │   ├── ProductList.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Toast.jsx
+│   │   │   └── ToastContainer.jsx
+│   │   ├── contexts/
+│   │   │   └── ToastContext.js
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── utils/
+│   │   │   └── validation.js
+│   │   └── App.js
+│   └── package.json
+└── README.md
+```
 
-### Code Splitting
+## Database Schema
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Products Table
 
-### Analyzing the Bundle Size
+```sql
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL UNIQUE,
+    price DECIMAL(10, 2) NOT NULL,
+    image_path VARCHAR(255) NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## API Endpoints
 
-### Making a Progressive Web App
+| Method | Endpoint        | Description           |
+| ------ | --------------- | --------------------- |
+| GET    | `/api/products` | Retrieve all products |
+| POST   | `/api/products` | Create a new product  |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Example API Request
 
-### Advanced Configuration
+```javascript
+// Create product
+const formData = new FormData();
+formData.append("product_name", "Example Product");
+formData.append("price", 29.99);
+formData.append("image", imageFile); // Optional
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+axios.post("/api/products", formData, {
+  headers: { "Content-Type": "multipart/form-data" },
+});
+```
 
-### Deployment
+## Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Backend Configuration
 
-### `npm run build` fails to minify
+- **CORS**: Configured to allow requests from the frontend domain.
+- **File Storage**: Images stored in `storage/app/public/products`.
+- **Validation**: Enforces product name uniqueness and price constraints.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Frontend Configuration
+
+- **API Base URL**: Set via `REACT_APP_API_BASE_URL` in `.env`.
+- **Toast System**: Global notification system with auto-dismiss.
+- **Image Handling**: Fallback to placeholder initials for missing images.
+
+## UI Components
+
+### ProductForm
+
+- Form for adding products.
+- Real-time validation with error feedback.
+- Image upload with preview and loading states.
+
+### ProductList
+
+- Responsive grid layout for product display.
+- Card-based design with image placeholders.
+- Loading states for better UX.
+
+### Toast System
+
+- Displays success, error, warning, and info notifications.
+- Auto dismiss with timeout.
+
+## Validation Rules
+
+### Frontend Validation
+
+- **Product Name**: Required, 2-100 characters.
+- **Price**: Required, positive number, max 1,000,000.
+- **Image**: Optional, must be image (jpeg, png, jpg, gif), max 2MB.
+
+## Troubleshooting
+
+### Common Issues
+
+- **CORS Errors**:
+  - Ensure backend CORS allows the frontend domain.
+  - Check `cors.php` in Laravel configuration.
+- **Image Upload Issues**:
+  - Verify `storage` directory has write permissions.
+  - Run `php artisan storage:link`.
+- **Database Connection**:
+  - Confirm MySQL is running.
+  - Verify `.env` database credentials.
+- **API Connection**:
+  - Ensure backend server runs on port 8000.
+  - Check `REACT_APP_API_BASE_URL` in frontend `.env`.
