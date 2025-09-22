@@ -16,11 +16,6 @@ The **GoMart System** is a full-stack application built with React and Laravel f
 8. [Configuration](#configuration)
 9. [UI Components](#ui-components)
 10. [Validation Rules](#validation-rules)
-11. [Scripts](#scripts)
-12. [Troubleshooting](#troubleshooting)
-13. [License](#license)
-14. [Contributing](#contributing)
-15. [Support](#support)
 
 ## Features
 
