@@ -111,7 +111,7 @@ The **GoMart System** is a full-stack application built with React and Laravel f
 ## Project Structure
 
 ```
-product-catalogue/
+GoMart/
 ├── backend/                 # Laravel API
 │   ├── app/
 │   │   ├── Models/
